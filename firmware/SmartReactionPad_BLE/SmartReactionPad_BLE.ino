@@ -248,7 +248,7 @@ class ServerCallbacks : public BLEServerCallbacks {
 
 class RxCallbacks : public BLECharacteristicCallbacks {
   void onWrite(BLECharacteristic *characteristic) {
-    String value = characteristic->getValue();
+    String value = String(characteristic->getValue().c_str());
     if (value.length() > 0) pendingCommand += value;
   }
 };
