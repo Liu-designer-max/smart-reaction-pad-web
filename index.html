@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#101820">
+    <title>Smart Reaction Pad RTP Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">Biomedical Engineering Wearable Device Demo</p>
+        <h1>Smart Reaction Pad</h1>
+      </div>
+      <div class="status-pill" id="connectionStatus" data-state="offline">
+        <span></span>
+        <strong>Offline</strong>
+      </div>
+    </header>
+
+    <main class="app-shell">
+      <section class="control-panel" aria-label="Session controls">
+        <div class="panel-header">
+          <div>
+            <h2>Session Control</h2>
+            <p>BLE-linked return-to-play reaction assessment</p>
+          </div>
+        </div>
+
+        <div class="control-grid">
+          <label>
+            Test mode
+            <select id="modeSelect">
+              <option value="0">Baseline - 20 Go trials</option>
+              <option value="1">Left side - 12 Go trials</option>
+              <option value="2">Right side - 12 Go trials</option>
+              <option value="3">Dual task - Go/No-Go</option>
+              <option value="4">Fatigue - 40 Go trials</option>
+              <option value="5">Quick screen - 10 Go trials</option>
+            </select>
+          </label>
+
+          <label>
+            Healthy baseline RT (ms)
+            <input id="baselineInput" type="number" min="100" max="1500" step="5" value="280">
+          </label>
+        </div>
+
+        <div class="button-row">
+          <button id="connectButton" class="primary">Connect BLE</button>
+          <button id="startButton">Start</button>
+          <button id="stopButton">Stop</button>
+          <button id="demoButton">Run Demo</button>
+        </div>
+
+        <p class="hint" id="bleHint">
+          Web Bluetooth requires HTTPS and a BLE GATT firmware build. On iPhone, open this page in Bluefy.
+        </p>
+      </section>
+
+      <section class="metrics-strip" aria-label="Live metrics">
+        <div class="metric">
+          <span>Timer</span>
+          <strong id="sessionTimer">00:00</strong>
+        </div>
+        <div class="metric">
+          <span>Trials</span>
+          <strong id="trialCounter">0 / 0</strong>
+        </div>
+        <div class="metric">
+          <span>Last RT</span>
+          <strong id="lastRt">-- ms</strong>
+        </div>
+        <div class="metric">
+          <span>Contact</span>
+          <strong id="contactLevel">--</strong>
+        </div>
+      </section>
+
+      <section class="workbench">
+        <div class="mat-panel">
+          <div class="panel-header">
+            <div>
+              <h2>Live Mat View</h2>
+              <p>Six FSR zones mapped to the physical yoga mat layout</p>
+            </div>
+          </div>
+
+          <div class="mat" id="matView" aria-label="Reaction pad zones">
+            <button class="zone" data-zone="0"><span>LF</span><small>Zone 1</small></button>
+            <button class="zone" data-zone="1"><span>RF</span><small>Zone 2</small></button>
+            <button class="zone" data-zone="4"><span>LL</span><small>Zone 5</small></button>
+            <div class="center-node">
+              <strong>RGB</strong>
+              <span>OLED</span>
+            </div>
+            <button class="zone" data-zone="5"><span>RL</span><small>Zone 6</small></button>
+            <button class="zone" data-zone="2"><span>LR</span><small>Zone 3</small></button>
+            <button class="zone" data-zone="3"><span>RR</span><small>Zone 4</small></button>
+          </div>
+        </div>
+
+        <div class="event-panel">
+          <div class="panel-header">
+            <div>
+              <h2>Live Trial Stream</h2>
+              <p>Incoming BLE JSON events</p>
+            </div>
+            <div class="button-row compact">
+              <button id="exportJsonButton">JSON</button>
+              <button id="exportCsvButton">CSV</button>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Mode</th>
+                  <th>Zone</th>
+                  <th>Stim</th>
+                  <th>RT</th>
+                  <th>Result</th>
+                  <th>FSR</th>
+                </tr>
+              </thead>
+              <tbody id="trialTable">
+                <tr><td colspan="7" class="empty">No trials yet</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="analysis-grid" aria-label="Biomedical analysis">
+        <article class="analysis-card">
+          <h3>Reaction Time Quality</h3>
+          <div class="score" id="meanRt">-- ms</div>
+          <p id="rtInterpretation">Start a session to evaluate visual perception, decision speed, and motor initiation.</p>
+          <canvas id="rtChart" width="600" height="240"></canvas>
+        </article>
+
+        <article class="analysis-card">
+          <h3>Limb Symmetry Index</h3>
+          <div class="score" id="lsiScore">--%</div>
+          <p id="lsiInterpretation">Run left and right trials, or use mixed-zone data, to estimate side-to-side neuromuscular symmetry.</p>
+          <div class="bar-meter"><span id="lsiBar"></span></div>
+        </article>
+
+        <article class="analysis-card">
+          <h3>Cognitive-Motor Load</h3>
+          <div class="score" id="dualCost">--</div>
+          <p id="dualInterpretation">Dual-task cost and false alarms reflect inhibitory control under sport-like uncertainty.</p>
+          <div class="split-stats">
+            <div><span>False alarms</span><strong id="falseAlarmRate">--</strong></div>
+            <div><span>Correct withholds</span><strong id="withholdRate">--</strong></div>
+          </div>
+        </article>
+
+        <article class="analysis-card">
+          <h3>Fatigue Response</h3>
+          <div class="score" id="fatigueIndex">--</div>
+          <p id="fatigueInterpretation">Repeated-trial slowing can indicate reduced neuromuscular control under fatigue.</p>
+          <div id="zoneHeatmap" class="zone-heatmap"></div>
+        </article>
+      </section>
+
+      <section class="reference-panel">
+        <h2>Clinical Interpretation Notes</h2>
+        <ul>
+          <li><strong>RT artifacts:</strong> responses below 50 ms are treated as anticipations or sensor artifacts.</li>
+          <li><strong>Delayed responses:</strong> responses above 2000 ms are excluded from mean RT and marked as missed/attention lapses.</li>
+          <li><strong>LSI:</strong> 90% or above is commonly used as a functional symmetry target; below 85% is a deficit flag.</li>
+          <li><strong>Dual-task cost:</strong> greater than 20% or more than 50 ms over baseline is flagged for caution.</li>
+          <li><strong>Disclaimer:</strong> this dashboard supports education and prototype evaluation; it is not medical clearance.</li>
+        </ul>
+      </section>
+    </main>
+
+    <template id="heatCellTemplate">
+      <div class="heat-cell">
+        <span></span>
+        <strong></strong>
+      </div>
+    </template>
+
+    <script src="app.js"></script>
+  </body>
+</html>
