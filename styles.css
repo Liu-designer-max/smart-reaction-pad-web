@@ -66,12 +66,25 @@ button:disabled {
 }
 
 .eyebrow {
-  margin: 0 0 6px;
+  margin: 0 0 5px;
   color: #a7c7c3;
   font-size: 0.78rem;
   font-weight: 700;
   letter-spacing: 0;
   text-transform: uppercase;
+}
+
+.group-mark {
+  display: inline-flex;
+  align-items: center;
+  margin: 0 0 10px;
+  padding: 4px 9px;
+  border: 1px solid rgba(167, 199, 195, 0.34);
+  border-radius: 999px;
+  color: #d8ebe8;
+  background: rgba(255, 255, 255, 0.07);
+  font-size: 0.78rem;
+  font-weight: 650;
 }
 
 h1,
@@ -85,6 +98,16 @@ h1 {
   margin-bottom: 0;
   font-size: clamp(2rem, 4vw, 3.5rem);
   letter-spacing: 0;
+  line-height: 1.05;
+}
+
+h1 span {
+  display: block;
+  margin-top: 7px;
+  color: #b9d5d2;
+  font-size: clamp(0.95rem, 1.45vw, 1.28rem);
+  font-weight: 650;
+  line-height: 1.35;
 }
 
 h2 {
