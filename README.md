@@ -103,6 +103,20 @@ python -m http.server 8080
 
 Open `http://localhost:8080` for desktop testing. Web Bluetooth on mobile requires an HTTPS origin, so use GitHub Pages for the iPhone/Bluefy demo.
 
+## Validation
+
+The repository includes a bundled sample session and a lightweight parser/statistics check:
+
+```bash
+node tools/validate-sample.mjs
+```
+
+Expected output:
+
+```text
+Validated 6 sample trials. Mean RT 268 ms.
+```
+
 ## References
 
 - MDN Web Bluetooth API: https://developer.mozilla.org/en-US/docs/Web/API/Web_Bluetooth_API

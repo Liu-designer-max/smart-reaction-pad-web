@@ -455,11 +455,15 @@ function renderChart() {
   ctx.strokeStyle = "#0f766e";
   ctx.lineWidth = 4;
   ctx.beginPath();
+  let started = false;
   values.forEach((value, index) => {
     if (!Number.isFinite(value)) return;
     const x = index * stepX;
     const y = height - 26 - ((value - min) / (max - min)) * (height - 52);
-    if (index === 0) ctx.moveTo(x, y);
+    if (!started) {
+      ctx.moveTo(x, y);
+      started = true;
+    }
     else ctx.lineTo(x, y);
   });
   ctx.stroke();

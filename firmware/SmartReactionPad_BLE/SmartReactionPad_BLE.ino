@@ -216,7 +216,9 @@ void notifyLine(const String &line) {
   String payload = line + "\n";
   const size_t chunkSize = 180;
   for (size_t i = 0; i < payload.length(); i += chunkSize) {
-    String chunk = payload.substring(i, min(i + chunkSize, payload.length()));
+    size_t endIndex = i + chunkSize;
+    if (endIndex > payload.length()) endIndex = payload.length();
+    String chunk = payload.substring(i, endIndex);
     pTxCharacteristic->setValue((uint8_t*)chunk.c_str(), chunk.length());
     pTxCharacteristic->notify();
     delay(8);
