@@ -159,8 +159,10 @@ void showMode(int m) { setRaw(13, 13, 13, FONT[m]); }
 
 // ==================== LED Functions ====================
 void shiftOut164() {
-  shiftOut(PIN_164_DATA, PIN_164_CLOCK, LSBFIRST, ledBuf[1]);
-  shiftOut(PIN_164_DATA, PIN_164_CLOCK, LSBFIRST, ledBuf[0]);
+  // 74HC164 shifts the newest bit into QA/Q0. Sending MSBFIRST makes
+  // byte bit0 end up on Q0, bit1 on Q1, ... bit7 on Q7 as documented.
+  shiftOut(PIN_164_DATA, PIN_164_CLOCK, MSBFIRST, ledBuf[1]);
+  shiftOut(PIN_164_DATA, PIN_164_CLOCK, MSBFIRST, ledBuf[0]);
 }
 
 void zoneLED(int z, bool red, bool green) {
