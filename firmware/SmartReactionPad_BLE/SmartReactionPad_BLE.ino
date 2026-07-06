@@ -180,9 +180,11 @@ void zoneLED(int z, bool red, bool green) {
 }
 
 void ky009(bool r, bool g, bool b) {
-  if (r) ledBuf[1] &= ~(1 << 4); else ledBuf[1] |= (1 << 4);
-  if (g) ledBuf[1] &= ~(1 << 5); else ledBuf[1] |= (1 << 5);
-  if (b) ledBuf[1] &= ~(1 << 6); else ledBuf[1] |= (1 << 6);
+  // The actual module is labelled R/G/B/GND, so it is common cathode.
+  // Its GND pin goes to ground, and each colour turns on when driven HIGH.
+  if (r) ledBuf[1] |= (1 << 4); else ledBuf[1] &= ~(1 << 4);
+  if (g) ledBuf[1] |= (1 << 5); else ledBuf[1] &= ~(1 << 5);
+  if (b) ledBuf[1] |= (1 << 6); else ledBuf[1] &= ~(1 << 6);
   shiftOut164();
 }
 

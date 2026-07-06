@@ -12,7 +12,7 @@ The dashboard is built for the project hardware described in the assembly guide:
 - 6 FSR pressure sensors
 - 2x 74HC164N shift registers
 - 12 zone LEDs: red for Go, green for No-Go
-- KY-009 common-anode RGB status LED
+- R/G/B/GND common-cathode RGB status LED module
 - OLED SSD1306 I2C display
 - 4-digit seven-segment display
 - Button on GPIO 19
