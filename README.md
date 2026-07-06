@@ -51,7 +51,7 @@ Commands from the browser:
 Trial event from ESP32:
 
 ```json
-{"event":"trial","trial":1,"total":20,"mode":0,"zone":2,"zone_name":"LR","stim":"RED","rt_ms":245.3,"result":"go_correct","peak_adc":1380}
+{"event":"trial","trial":1,"total":20,"mode":0,"zone":2,"zone_name":"LR","pressed_zone":2,"pressed_zone_name":"LR","stim":"RED","rt_ms":245.3,"result":"go_correct","peak_adc":1380}
 ```
 
 ## Dashboard Features

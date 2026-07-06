@@ -5,8 +5,8 @@ const root = path.resolve(import.meta.dirname, "..");
 const samplePath = path.join(root, "samples", "baseline-session.json");
 const sample = JSON.parse(fs.readFileSync(samplePath, "utf8"));
 
-const requiredTrialKeys = ["event", "trial", "total", "mode", "zone", "zone_name", "stim", "rt_ms", "result", "peak_adc"];
-const validResults = new Set(["go_correct", "false_alarm", "correct_withhold", "miss", "too_fast"]);
+const requiredTrialKeys = ["event", "trial", "total", "mode", "zone", "zone_name", "pressed_zone", "pressed_zone_name", "stim", "rt_ms", "result", "peak_adc"];
+const validResults = new Set(["go_correct", "false_alarm", "correct_withhold", "miss", "too_fast", "wrong_zone"]);
 
 if (!Array.isArray(sample.trials) || sample.trials.length === 0) {
   throw new Error("Sample must include trials.");

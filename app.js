@@ -151,6 +151,7 @@ function flashZone(zoneId, stim, result) {
 function trialQuality(trial) {
   if (trial.result === "correct_withhold") return { label: "withhold", tone: "ok" };
   if (trial.result === "false_alarm") return { label: "false alarm", tone: "bad" };
+  if (trial.result === "wrong_zone") return { label: "wrong zone", tone: "bad" };
   if (trial.result === "miss" || trial.result === "timeout") return { label: "timeout", tone: "bad" };
   if (trial.rt_ms < 50) return { label: "too fast", tone: "warn" };
   if (trial.rt_ms > 2000) return { label: "delayed", tone: "warn" };
@@ -185,6 +186,7 @@ function normalizeTrial(event) {
   const zone = Number(event.zone);
   const zoneName = event.zone_name || ZONES[zone]?.name || `Z${zone + 1}`;
   const result = event.result || inferResult(event);
+  const pressedZone = event.pressed_zone === null || event.pressed_zone === undefined ? zone : Number(event.pressed_zone);
   return {
     event: "trial",
     trial: Number(event.trial ?? state.trials.length + 1),
@@ -192,6 +194,8 @@ function normalizeTrial(event) {
     mode: Number(event.mode ?? state.mode),
     zone,
     zone_name: zoneName,
+    pressed_zone: pressedZone,
+    pressed_zone_name: event.pressed_zone_name || ZONES[pressedZone]?.name || "--",
     stim: event.stim || "RED",
     rt_ms: event.rt_ms === null || event.rt_ms === undefined ? null : Number(event.rt_ms),
     result,
@@ -326,7 +330,7 @@ function renderTable() {
         <tr>
           <td>${trial.trial}</td>
           <td>${modeLabel(trial.mode)}</td>
-          <td>${trial.zone_name}</td>
+          <td>${trial.pressed_zone === trial.zone ? trial.zone_name : `${trial.zone_name}->${trial.pressed_zone_name}`}</td>
           <td>${trial.stim}</td>
           <td>${Number.isFinite(trial.rt_ms) ? trial.rt_ms.toFixed(1) : "--"}</td>
           <td><span class="tag ${quality.tone}">${quality.label}</span></td>
@@ -586,7 +590,7 @@ function exportJson() {
 }
 
 function exportCsv() {
-  const header = ["trial", "total", "mode", "zone", "zone_name", "stim", "rt_ms", "result", "peak_adc", "timestamp"];
+  const header = ["trial", "total", "mode", "zone", "zone_name", "pressed_zone", "pressed_zone_name", "stim", "rt_ms", "result", "peak_adc", "timestamp"];
   const rows = state.trials.map((trial) => header.map((key) => trial[key] ?? "").join(","));
   download("smart-reaction-pad-session.csv", [header.join(","), ...rows].join("\n"), "text/csv");
 }

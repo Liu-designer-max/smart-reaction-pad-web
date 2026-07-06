@@ -101,6 +101,7 @@ unsigned long armStart_ms = 0;
 unsigned long randomDelay_ms = 0;
 unsigned long stateStart_ms = 0;
 int activeZone = -1;
+int pressedZone = -1;
 int stimLED = 0; // 0=RED Go, 1=GREEN No-Go, 2=BLUE No-Go
 int peakAdc = 0;
 
@@ -418,7 +419,7 @@ void fireStimulus() {
   showNum(0);
 }
 
-void recordTrial(float rt, const String &result) {
+void recordTrial(float rt, const String &result, int hitZone) {
   allZoneOff();
   ky009(false, false, false);
 
@@ -438,6 +439,8 @@ void recordTrial(float rt, const String &result) {
     ",\"mode\":" + String((int)currentMode) +
     ",\"zone\":" + String(activeZone) +
     ",\"zone_name\":\"" + String(ZONE_NAMES[activeZone]) + "\"" +
+    ",\"pressed_zone\":" + String(hitZone) +
+    ",\"pressed_zone_name\":\"" + String(hitZone >= 0 ? ZONE_NAMES[hitZone] : "--") + "\"" +
     ",\"stim\":\"" + stimName + "\"" +
     ",\"rt_ms\":" + rtField +
     ",\"result\":\"" + result + "\"" +
@@ -449,26 +452,31 @@ void recordTrial(float rt, const String &result) {
   stateStart_ms = millis();
 }
 
-void handleResponse() {
+void handleResponse(int hitZone) {
   float rt = (micros() - stimStart_us) / 1000.0;
   bool falseAlarm = currentMode == MODE_DUAL && stimLED != 0;
+  bool wrongZone = stimLED == 0 && hitZone != activeZone;
 
   if (falseAlarm) {
     showErr();
     ky009(true, false, false);
-    recordTrial(rt, "false_alarm");
+    recordTrial(rt, "false_alarm", hitZone);
+  } else if (wrongZone) {
+    showErr();
+    ky009(true, false, false);
+    recordTrial(rt, "wrong_zone", hitZone);
   } else if (rt < 50) {
     showNum((int)rt);
     ky009(true, true, false);
-    recordTrial(rt, "too_fast");
+    recordTrial(rt, "too_fast", hitZone);
   } else if (rt > 2000) {
     showDash();
     ky009(true, false, false);
-    recordTrial(rt, "miss");
+    recordTrial(rt, "miss", hitZone);
   } else {
     showNum((int)rt);
     ky009(false, true, false);
-    recordTrial(rt, "go_correct");
+    recordTrial(rt, "go_correct", hitZone);
   }
 }
 
@@ -477,10 +485,10 @@ void handleTimeout() {
   showDash();
   if (correctWithhold) {
     ky009(false, true, false);
-    recordTrial(-1, "correct_withhold");
+    recordTrial(-1, "correct_withhold", -1);
   } else {
     ky009(true, false, false);
-    recordTrial(-1, "miss");
+    recordTrial(-1, "miss", -1);
   }
 }
 
@@ -594,12 +602,17 @@ void loop() {
 
     case STIMULUS: {
       unsigned long elapsed = (micros() - stimStart_us) / 1000;
-      int adc = analogRead(FSR_PINS[activeZone]);
-      if (adc > peakAdc) peakAdc = adc;
+      int hitZone = -1;
+      for (int z = 0; z < 6; z++) {
+        int adc = analogRead(FSR_PINS[z]);
+        if (adc > peakAdc) peakAdc = adc;
+        if (adc > FSR_THRESHOLD && hitZone < 0) hitZone = z;
+      }
       if (elapsed > TIMEOUT_MS) {
         handleTimeout();
-      } else if (adc > FSR_THRESHOLD && elapsed > DEBOUNCE_MS) {
-        handleResponse();
+      } else if (hitZone >= 0 && elapsed > DEBOUNCE_MS) {
+        pressedZone = hitZone;
+        handleResponse(hitZone);
       } else if (elapsed < 10000) {
         showNum((int)elapsed);
       }

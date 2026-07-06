@@ -2,12 +2,12 @@
   "exported_at": "2026-07-06T04:00:00.000Z",
   "mode": 0,
   "trials": [
-    {"event":"trial","trial":1,"total":20,"mode":0,"zone":0,"zone_name":"LF","stim":"RED","rt_ms":246.2,"result":"go_correct","peak_adc":1680},
-    {"event":"trial","trial":2,"total":20,"mode":0,"zone":1,"zone_name":"RF","stim":"RED","rt_ms":264.8,"result":"go_correct","peak_adc":1512},
-    {"event":"trial","trial":3,"total":20,"mode":0,"zone":2,"zone_name":"LR","stim":"RED","rt_ms":287.1,"result":"go_correct","peak_adc":1884},
-    {"event":"trial","trial":4,"total":20,"mode":0,"zone":3,"zone_name":"RR","stim":"RED","rt_ms":299.5,"result":"go_correct","peak_adc":1742},
-    {"event":"trial","trial":5,"total":20,"mode":0,"zone":4,"zone_name":"LL","stim":"RED","rt_ms":235.0,"result":"go_correct","peak_adc":1620},
-    {"event":"trial","trial":6,"total":20,"mode":0,"zone":5,"zone_name":"RL","stim":"RED","rt_ms":272.6,"result":"go_correct","peak_adc":1588}
+    {"event":"trial","trial":1,"total":20,"mode":0,"zone":0,"zone_name":"LF","pressed_zone":0,"pressed_zone_name":"LF","stim":"RED","rt_ms":246.2,"result":"go_correct","peak_adc":1680},
+    {"event":"trial","trial":2,"total":20,"mode":0,"zone":1,"zone_name":"RF","pressed_zone":1,"pressed_zone_name":"RF","stim":"RED","rt_ms":264.8,"result":"go_correct","peak_adc":1512},
+    {"event":"trial","trial":3,"total":20,"mode":0,"zone":2,"zone_name":"LR","pressed_zone":2,"pressed_zone_name":"LR","stim":"RED","rt_ms":287.1,"result":"go_correct","peak_adc":1884},
+    {"event":"trial","trial":4,"total":20,"mode":0,"zone":3,"zone_name":"RR","pressed_zone":3,"pressed_zone_name":"RR","stim":"RED","rt_ms":299.5,"result":"go_correct","peak_adc":1742},
+    {"event":"trial","trial":5,"total":20,"mode":0,"zone":4,"zone_name":"LL","pressed_zone":4,"pressed_zone_name":"LL","stim":"RED","rt_ms":235.0,"result":"go_correct","peak_adc":1620},
+    {"event":"trial","trial":6,"total":20,"mode":0,"zone":5,"zone_name":"RL","pressed_zone":5,"pressed_zone_name":"RL","stim":"RED","rt_ms":272.6,"result":"go_correct","peak_adc":1588}
   ],
   "summary": {
     "event": "summary",
